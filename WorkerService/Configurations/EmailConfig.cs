@@ -1,37 +1,39 @@
 ﻿using Microsoft.Extensions.Configuration;
-
 namespace WorkerService.Configurations
 {
-    public class EmailConfig : Config
+    public static class EmailConfig
     {
-        public EmailConfig(IConfiguration configuration) : base(configuration)
-        {
-        }
 
-        public string FromName
-             => GetValue("Mail:From:Name");
+        public static string EmailFromName(this IConfiguration config)
+             => config.GetValue<string>("Mail:From:Name");
 
-        public string FromAdress
-            => GetValue("Mail:From:Adress");
 
-        public string ToName
-            => GetValue("Mail:To:Name");
+        public static string EmailFromAdress(this IConfiguration config)
+            => config.GetValue<string>("Mail:From:Adress");
 
-        public string ToAdress
-            => GetValue("Mail:To:Adress");
 
-        public string Host
-             => GetValue("Mail:Host");
+        public static string EmailToName(this IConfiguration config)
+            => config.GetValue<string>("Mail:To:Name");
 
-        public string Port
-            => GetValue("Mail:Port");
 
-        public string Username
-            => GetValue("Mail:Username");
+        public static string EmailToAdress(this IConfiguration config)
+            => config.GetValue<string>("Mail:To:Adress");
 
-        public string Password
-            => GetValue("Mail:Password");
 
+        public static string EmailHost(this IConfiguration config)
+             => config.GetValue<string>("Mail:Host");
+
+
+        public static int EmailPort(this IConfiguration config)
+            => config.GetValue<int>("Mail:Port");
+
+
+        public static string EmailUsername(this IConfiguration config)
+            => config.GetValue<string>("Mail:Username");
+
+
+        public static string EmailPassword(this IConfiguration config)
+            => config.GetValue<string>("Mail:Password");
 
     }
 }

@@ -1,9 +1,8 @@
 ﻿using Microsoft.Extensions.Configuration;
-using WorkerService.Contracts;
 
 namespace WorkerService.Configurations
 {
-    public abstract class Config : IConfig
+    public abstract class Config
     {
         public IConfiguration Configuration { get; }
 

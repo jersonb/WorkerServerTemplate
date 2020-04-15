@@ -3,6 +3,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
+using WorkerService.Contracts;
+using WorkerService.Manager;
 
 namespace WorkerService
 {
@@ -19,11 +21,12 @@ namespace WorkerService
             host.Services.UseScheduler(scheduler =>
                {
                    scheduler.Schedule<Worker>()
-                            .DailyAt(_schedule.Hour,_schedule.Minute)
+                            //.DailyAt(_schedule.Hour,_schedule.Minute)
+                            .DailyAt(8,54)
                             .Zoned(TimeZoneInfo.Local)
                             .Weekday();
 
-               }).OnError(ex => throw ex);
+               });
 
             host.Run();
             host.Dispose();
@@ -50,6 +53,7 @@ namespace WorkerService
                     GetSchedule(hostContext.Configuration);
 
                     services.AddSingleton(hostContext.Configuration);
+                    services.AddSingleton<IEmail,EmailManager>();
 
                     services.AddTransient<Worker>();
                 });

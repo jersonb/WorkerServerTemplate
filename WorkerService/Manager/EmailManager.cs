@@ -1,5 +1,5 @@
-﻿using MailKit.Net.Smtp;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
+using MailKit.Net.Smtp;
 using MimeKit;
 using System;
 using WorkerService.Configurations;
@@ -7,15 +7,44 @@ using WorkerService.Contracts;
 
 namespace WorkerService.Manager
 {
-    public class EmailManager : EmailConfig, IEmail
+    public class EmailManager : IEmail
     {
-        public EmailManager(IConfiguration configuration) : base(configuration)
+        private readonly  IConfiguration config;
+
+        public EmailManager(IConfiguration configuration)
         {
+            config = configuration;
         }
+
+        private void ConfigureEmail(string subject, string bodyText)
+        {
+            var message = new MimeMessage();
+            message.From.Add(From);
+            message.To.Add(To);
+            message.Subject = subject;
+
+            message.Body = new TextPart("plain")
+            {
+                Text = bodyText
+            };
+
+            using var client = new SmtpClient();
+            client.Connect(config.EmailHost(), config.EmailPort(), false);
+            client.Authenticate(config.EmailUsername(), config.EmailPassword());
+            client.Send(message);
+            client.Disconnect(true);
+
+        }
+
+        private MailboxAddress To
+            => new MailboxAddress(config.EmailToName(), config.EmailToAdress());
+
+        private MailboxAddress From
+            => new MailboxAddress(config.EmailFromName(), config.EmailFromAdress());
 
         public void Send(string information)
         {
-            ConfigureEmail("Tudo Ok!",information);
+            ConfigureEmail("Tudo Ok!", information);
         }
 
         public void Send(Exception exception)
@@ -26,30 +55,6 @@ namespace WorkerService.Manager
                                             Source: {exception.Source}");
         }
 
-        public void ConfigureEmail(string subject, string bodyText)
-        {
-            try
-            {
-                var message = new MimeMessage();
-                message.From.Add(new MailboxAddress(FromName, FromAdress));
-                message.To.Add(new MailboxAddress(ToName, ToAdress));
-                message.Subject = subject;
-
-                message.Body = new TextPart("plain")
-                {
-                    Text = bodyText
-                };
-
-                using var client = new SmtpClient();
-                client.Connect(Host, int.Parse(Port), false);
-                client.Authenticate(Username, Password);
-                client.Send(message);
-                client.Disconnect(true);
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
+        
     }
 }

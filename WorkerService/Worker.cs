@@ -9,14 +9,16 @@ namespace WorkerService
 {
     public class Worker : IInvocable
     {
-        private bool _retry = true;
         private readonly ILog Loggeding;
         private readonly IEmail Email;
+
         public Worker(IConfiguration configuration)
         {
             Loggeding = new LogManager(configuration);
             Email = new EmailManager(configuration);
         }
+
+        private bool _retry = true;
 
         public Task Invoke()
         {
@@ -26,7 +28,6 @@ namespace WorkerService
                 Email.Send("Init");
 
                 return Task.CompletedTask;
-
             }
             catch (Exception ex)
             {

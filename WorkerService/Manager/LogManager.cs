@@ -6,16 +6,19 @@ using WorkerService.Contracts;
 
 namespace WorkerService.Manager
 {
-    public class LogManager : LogConfig, ILog
+    public class LogManager : ILog
     {
-        public LogManager(IConfiguration configuration) : base(configuration)
+        public LogConfig LogConfig { get; }
+
+        public LogManager(IConfiguration configuration) 
         {
+            LogConfig = new LogConfig(configuration);
         }
 
         private ILogger GetConfiguration()
             => new LoggerConfiguration()
                     .WriteTo.Console()
-                    .WriteTo.File($"{Path}{DateTime.Now.Date:yyyyMMdd}.log")
+                    .WriteTo.File($"{LogConfig.Path}{DateTime.Now.Date:yyyyMMdd}.log")
                     .CreateLogger();
 
         public void Error(Exception exception)

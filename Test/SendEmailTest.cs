@@ -14,6 +14,7 @@ namespace Test
                 .SetBasePath(@"C:\Users\User\Documents\Projetos\WorkerService\WorkerService")
                 .AddJsonFile("appsettings.Development.json");
             Configuration = builder.Build();
+
         }
 
         [Fact]
