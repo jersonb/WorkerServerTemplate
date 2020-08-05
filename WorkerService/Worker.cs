@@ -1,9 +1,7 @@
 using Coravel.Invocable;
-using Microsoft.Extensions.Configuration;
 using System;
 using System.Threading.Tasks;
 using WorkerService.Contracts;
-using WorkerService.Manager;
 
 namespace WorkerService
 {
@@ -12,10 +10,10 @@ namespace WorkerService
         private readonly ILog Loggeding;
         private readonly IEmail Email;
 
-        public Worker(IConfiguration configuration)
+        public Worker(IInformation information)
         {
-            Loggeding = new LogManager(configuration);
-            Email = new EmailManager(configuration);
+            Loggeding = information.Log;
+            Email = information.Email;
         }
 
         private bool _retry = true;
@@ -25,8 +23,7 @@ namespace WorkerService
             try
             {
                 Loggeding.Info("Init");
-                Email.Send("Init");
-
+                Email.Send("");
                 return Task.CompletedTask;
             }
             catch (Exception ex)
@@ -36,11 +33,10 @@ namespace WorkerService
                     _retry = false;
                     Task.Delay(3000);
                     Loggeding.Info("Retry");
-                   return Invoke();
+                    return Invoke();
                 }
                 else
                 {
-                    Email.Send(ex);
                     Loggeding.Error(ex);
                     return Task.CompletedTask;
                 }

@@ -8,23 +8,23 @@ namespace WorkerService.Manager
 {
     public class LogManager : ILog
     {
-        public LogConfig LogConfig { get; }
+        private readonly string Path = null;
 
-        public LogManager(IConfiguration configuration) 
+        public LogManager(IConfiguration configuration)
         {
-            LogConfig = new LogConfig(configuration);
+            Path = configuration.GetLogPath();
         }
 
         private ILogger GetConfiguration()
             => new LoggerConfiguration()
                     .WriteTo.Console()
-                    .WriteTo.File($"{LogConfig.Path}{DateTime.Now.Date:yyyyMMdd}.log")
+                    .WriteTo.File($"{Path}{DateTime.Now.Date:yyyyMMdd}.log")
                     .CreateLogger();
 
         public void Error(Exception exception)
         {
             Log.Logger = GetConfiguration();
-          
+
             Log.Error(exception, $@"Message: {exception.Message}
                                    StackTrace: {exception.StackTrace}
                                    InnerException: {exception.InnerException}
@@ -35,9 +35,9 @@ namespace WorkerService.Manager
         public void Info(string info)
         {
             Log.Logger = GetConfiguration();
-          
+
             Log.Information(info);
-           
+
             Log.CloseAndFlush();
         }
 

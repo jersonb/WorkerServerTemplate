@@ -21,11 +21,11 @@ namespace WorkerService
             host.Services.UseScheduler(scheduler =>
                {
                    scheduler.Schedule<Worker>()
-                            //.DailyAt(_schedule.Hour,_schedule.Minute)
-                            .DailyAt(8,54)
+                            //.DailyAt(_schedule.Hour, _schedule.Minute)
+                            //.DailyAt(8,54)
+                            .EveryFiveSeconds()
                             .Zoned(TimeZoneInfo.Local)
                             .Weekday();
-
                });
 
             host.Run();
@@ -52,13 +52,12 @@ namespace WorkerService
 
                     GetSchedule(hostContext.Configuration);
 
-                    services.AddSingleton(hostContext.Configuration);
-                    services.AddSingleton<IEmail,EmailManager>();
+                    services.AddSingleton<IInformation, Information>();
 
                     services.AddTransient<Worker>();
                 });
 
-        private static void GetSchedule(IConfiguration configuration) 
+        private static void GetSchedule(IConfiguration configuration)
         {
             var hour = int.Parse(configuration["Schedule:Hour"]);
             var minute = int.Parse(configuration["Schedule:Minute"]);

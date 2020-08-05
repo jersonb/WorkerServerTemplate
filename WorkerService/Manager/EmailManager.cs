@@ -29,22 +29,22 @@ namespace WorkerService.Manager
             };
 
             using var client = new SmtpClient();
-            client.Connect(config.EmailHost(), config.EmailPort(), false);
-            client.Authenticate(config.EmailUsername(), config.EmailPassword());
+            client.Connect(config.GetEmailHost(), config.GetEmailPort(), false);
+            client.Authenticate(config.GetEmailUsername(), config.GetEmailPassword());
             client.Send(message);
             client.Disconnect(true);
 
         }
 
         private MailboxAddress To
-            => new MailboxAddress(config.EmailToName(), config.EmailToAdress());
+            => new MailboxAddress(config.GetEmailDestinatary(), config.GetEmailAdressToSend());
 
         private MailboxAddress From
-            => new MailboxAddress(config.EmailFromName(), config.EmailFromAdress());
+            => new MailboxAddress(config.GetNameSender(), config.GetEmailSender());
 
         public void Send(string information)
         {
-            ConfigureEmail("Tudo Ok!", information);
+           // ConfigureEmail("Tudo Ok!", information);
         }
 
         public void Send(Exception exception)
